@@ -11,12 +11,13 @@
         android:theme="@style/Theme.Androidchatapp">
         <activity
             android:name=".activities.SignUpActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
+
+        <!-- Change the SignInActivity to MainActivity-->
         <activity
             android:name=".activities.SignInActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>
