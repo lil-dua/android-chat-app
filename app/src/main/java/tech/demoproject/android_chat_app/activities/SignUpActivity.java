@@ -36,10 +36,12 @@ public class SignUpActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set binding
         binding = ActivitySignUpBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         preferenceManager = new PreferenceManager(getApplicationContext());
+        // set listener for all action
         setListeners();
     }
 
@@ -48,7 +50,7 @@ public class SignUpActivity extends AppCompatActivity {
         binding.textSignIn.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(), SignInActivity.class)));
 
-        // set onClick for button Sign Up--------------
+        // set onClick for button Sign Up
         binding.buttonSignUp.setOnClickListener(v -> {
             // check if all information is entered correctly
             if(isValidSignUpDetails()){
@@ -140,7 +142,7 @@ public class SignUpActivity extends AppCompatActivity {
             showToast("Enter email");
             return false;
         }else if(!Patterns.EMAIL_ADDRESS.matcher(binding.inputEmail.getText().toString()).matches()){
-            showToast("Enter valid image");
+            showToast("Enter valid email");
             return false;
         }else if(binding.inputPassword.getText().toString().trim().isEmpty()){
             showToast("Enter password");
