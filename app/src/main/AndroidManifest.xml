@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tech.demoproject.android_chat_app">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -12,34 +12,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Androidchatapp">
         <activity
-            android:name=".activities.SignUpActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".activities.UsersActivity"
             android:exported="false" />
-
-        <!-- Change the SignInActivity to MainActivity-->
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" /> <!-- Change the SignInActivity to MainActivity -->
         <activity
             android:name=".activities.SignInActivity"
-            android:windowSoftInputMode="adjustResize"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".activities.MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
 
         <service
             android:name=".firebase.MessagingService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
