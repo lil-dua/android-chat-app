@@ -51,7 +51,8 @@ dependencies {
     implementation 'com.makeramen:roundedimageview:2.3.0'
 
     //Firebase
-    implementation 'com.google.firebase:firebase-messaging:20.1.0' // add firebase messaging
+
+    implementation 'com.google.firebase:firebase-messaging:23.0.5' // add firebase messaging
     implementation 'com.google.firebase:firebase-firestore:21.4.0' // add firebase fire store
 
     // MultiDex
