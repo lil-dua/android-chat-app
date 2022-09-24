@@ -59,6 +59,7 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
                             user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
                             user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
                             user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                            user.id = queryDocumentSnapshot.getId();
                             users.add(user);
                         }
                         //---------------------------2-----------------------------
@@ -89,6 +90,7 @@ public class UsersActivity extends AppCompatActivity implements UserListener {
         }
     }
 
+    // set Listener for each user on user list - access to ChatActivity
     @Override
     public void onUserClicked(User user) {
         Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
