@@ -2,6 +2,7 @@ package tech.demoproject.android_chat_app.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -13,11 +14,12 @@ import java.util.List;
 
 import tech.demoproject.android_chat_app.adapter.UserAdapter;
 import tech.demoproject.android_chat_app.databinding.ActivityUsersBinding;
+import tech.demoproject.android_chat_app.listeners.UserListener;
 import tech.demoproject.android_chat_app.models.User;
 import tech.demoproject.android_chat_app.utilities.Constants;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
-public class UsersActivity extends AppCompatActivity {
+public class UsersActivity extends AppCompatActivity implements UserListener {
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferenceManager;
@@ -61,7 +63,7 @@ public class UsersActivity extends AppCompatActivity {
                         }
                         //---------------------------2-----------------------------
                         if(users.size() > 0){
-                            UserAdapter userAdapter = new UserAdapter(users);
+                            UserAdapter userAdapter = new UserAdapter(users,this);
                             binding.usersRecycleView.setAdapter(userAdapter);
                             binding.usersRecycleView.setVisibility(View.VISIBLE);
                         }else{
@@ -85,5 +87,13 @@ public class UsersActivity extends AppCompatActivity {
         }else {
             binding.progressBar.setVisibility(View.INVISIBLE);
         }
+    }
+
+    @Override
+    public void onUserClicked(User user) {
+        Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER,user);
+        startActivity(intent);
+        finish();
     }
 }
