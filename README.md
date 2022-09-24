@@ -5,6 +5,31 @@
 </pre>
 
 
+##
+<p align="left">
+ <a href="https://firebase.google.com/" target="_blank" rel="noreferrer"> <img src="https://www.vectorlogo.zone/logos/firebase/firebase-icon.svg" alt="firebase" width="60" height="60"/> </a>
+ </p>
+ 
+# Firebase implementation:
+
+    
+    implementation 'com.google.firebase:firebase-messaging:23.0.5'
+    implementation 'com.google.firebase:firebase-firestore:21.4.0'
+ 
+ # Another implementation:
+ 
+    // Scalable Size Uni (support for different screen sizes)
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'  //SDP - a scalable size unit for screen
+    implementation 'com.intuit.ssp:ssp-android:1.0.6' //SSP - a scalable size unit for text
+
+    // Rounded ImageView
+    implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    // MultiDex
+    implementation 'androidx.multidex:multidex:2.0.1'
+ 
+
+
 # 💫About Me :
 
 I'm a android developer from Vietnam.
