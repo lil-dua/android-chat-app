@@ -1,5 +1,7 @@
 package tech.demoproject.android_chat_app.utilities;
 
+import java.util.HashMap;
+
 /***
  * Created by HoangRyan aka LilDua on 9/22/2022.
  */
@@ -27,5 +29,27 @@ public class Constants {
     public static final String KEY_SENDER_IMAGE = "senderImage";
     public static final String KEY_RECEIVER_IMAGE = "receiverImage";
     public static final String KEY_LAST_MESSAGE = "lastMessage";
+    //Handing user availability
+    public static final String KEY_AVAILABILITY = "availability";
+    //Push notification
+    public static final String REMOTE_MSG_AUTHORIZATION = "Authorization";
+    public static final String REMOTE_MSG_CONTENT_TYPE = "Content-Type";
+    public static final String REMOTE_MSG_DATA = "data";
+    public static final String REMOTE_MSG_REGISTRATION_IDS = "registration_ids";
 
+    public static HashMap<String, String> remoteMsgHeaders = null;
+    public static HashMap<String, String> getRemoteMsgHeaders(){
+        if(remoteMsgHeaders == null){
+            remoteMsgHeaders = new HashMap<>();
+            remoteMsgHeaders.put(
+                    REMOTE_MSG_AUTHORIZATION,
+                    "key=AAAAwGcJotY:APA91bFba7Sw3I4V8nAMztgMasysTMCSWhTcLi3UkLKyaZxXcG6JkQtbtr9u30e2_QURD5Tp2bZNdYhvqH9FCzIW4VA6gXNv3nGba1PGpOF2UrhGMhikQ41UZxaWIOI0qTzrOIYCfKTd"
+            );
+            remoteMsgHeaders.put(
+                    REMOTE_MSG_CONTENT_TYPE,
+                    "application/json"
+            );
+        }
+        return remoteMsgHeaders;
+    }
 }

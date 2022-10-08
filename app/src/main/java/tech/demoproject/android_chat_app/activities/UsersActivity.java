@@ -1,7 +1,5 @@
 package tech.demoproject.android_chat_app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +17,7 @@ import tech.demoproject.android_chat_app.models.User;
 import tech.demoproject.android_chat_app.utilities.Constants;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
-public class UsersActivity extends AppCompatActivity implements UserListener {
+public class UsersActivity extends BaseActivity implements UserListener {
 
     private ActivityUsersBinding binding;
     private PreferenceManager preferenceManager;

@@ -1,7 +1,5 @@
 package tech.demoproject.android_chat_app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,7 +31,7 @@ import tech.demoproject.android_chat_app.utilities.Constants;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
 
-public class MainActivity extends AppCompatActivity implements ConversionListener {
+public class MainActivity extends BaseActivity implements ConversionListener {
 
     // ActivitySignUpBinding class is automatically generated from our layout file: 'activity_sign_in'
     private ActivityMainBinding binding;  //View Binding : a feature that allows you to more easily write code that interface with views
@@ -147,6 +145,7 @@ public class MainActivity extends AppCompatActivity implements ConversionListene
     }
 
     private void updateToken(String token){
+        preferenceManager.putString(Constants.KEY_FCM_TOKEN,token);
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         DocumentReference documentReference = database.collection(Constants.KEY_COLLECTION_USER)
                                                 .document(preferenceManager.getString(Constants.KEY_USER_ID));
