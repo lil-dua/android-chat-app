@@ -1,12 +1,12 @@
 package tech.demoproject.android_chat_app.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -39,6 +39,7 @@ public class SignInActivity extends AppCompatActivity {
         // set listener for all action
         setListeners();
     }
+
 
 
     private void setListeners(){

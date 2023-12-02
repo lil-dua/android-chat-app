@@ -8,6 +8,8 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
+
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
@@ -16,29 +18,36 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
+import tech.demoproject.android_chat_app.R;
 import tech.demoproject.android_chat_app.adapter.RecentConversationAdapter;
+import tech.demoproject.android_chat_app.adapter.UserAdapter;
 import tech.demoproject.android_chat_app.databinding.ActivityMainBinding;
 import tech.demoproject.android_chat_app.listeners.ConversionListener;
+import tech.demoproject.android_chat_app.listeners.UserListener;
 import tech.demoproject.android_chat_app.models.ChatMessage;
 import tech.demoproject.android_chat_app.models.User;
 import tech.demoproject.android_chat_app.utilities.Constants;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
 
-public class MainActivity extends BaseActivity implements ConversionListener {
+public class MainActivity extends BaseActivity implements ConversionListener, UserListener {
 
     // ActivitySignUpBinding class is automatically generated from our layout file: 'activity_sign_in'
     private ActivityMainBinding binding;  //View Binding : a feature that allows you to more easily write code that interface with views
     private PreferenceManager preferenceManager;
     private List<ChatMessage> conversations;
+    private List<User> users;
     private RecentConversationAdapter conversationAdapter;
+    private UserAdapter userAdapter;
     private FirebaseFirestore database;
+    private Integer keyType = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +58,7 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         preferenceManager = new PreferenceManager(getApplicationContext());
         ini();
         loadUserDetails(); //load user information
+        keyType = Constants.VIEW_TYPE_CONVERSATIONS;
         getToken();
         setListeners();
         listenConversations();
@@ -57,14 +67,51 @@ public class MainActivity extends BaseActivity implements ConversionListener {
 
     private void ini(){
         conversations = new ArrayList<>();
+        users = new ArrayList<>();
+        database = FirebaseFirestore.getInstance();
         conversationAdapter = new RecentConversationAdapter(conversations,this);
         binding.conversationRecycleView.setAdapter(conversationAdapter);
-        database = FirebaseFirestore.getInstance();
+        userAdapter = new UserAdapter(users,this);
     }
 
     private void setListeners(){
         binding.imageSignOut.setOnClickListener(v -> signOut());
         binding.fabNewChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),UsersActivity.class)));
+        binding.textConversations.setOnClickListener(v -> onRecentConversationClick());
+        binding.textFriends.setOnClickListener(v -> onFriendClick());
+    }
+
+    private void onRecentConversationClick() {
+        keyType = Constants.VIEW_TYPE_CONVERSATIONS;
+        onSelectedEvent();
+    }
+
+    private void onFriendClick() {
+        keyType = Constants.VIEW_TYPE_FRIENDS;
+        onSelectedEvent();
+    }
+
+    private void onSelectedEvent() {
+        if(Objects.equals(keyType, Constants.VIEW_TYPE_CONVERSATIONS)) {
+            //set color
+            binding.textConversations.setBackgroundResource(R.drawable.background_primary);
+            binding.textConversations.setTextColor(ContextCompat.getColor(this,R.color.white));
+            binding.textFriends.setBackgroundResource(R.drawable.background_transparent);
+            binding.textFriends.setTextColor(ContextCompat.getColor(this,R.color.secondary_text));
+
+            //init view
+            binding.conversationRecycleView.setAdapter(conversationAdapter);
+
+        }else {
+            //set color
+            binding.textFriends.setBackgroundResource(R.drawable.background_primary);
+            binding.textFriends.setTextColor(ContextCompat.getColor(this,R.color.white));
+            binding.textConversations.setBackgroundResource(R.drawable.background_transparent);
+            binding.textConversations.setTextColor(ContextCompat.getColor(this,R.color.secondary_text));
+
+            //init view
+            binding.conversationRecycleView.setAdapter(userAdapter);
+        }
     }
 
     // load user information
@@ -179,5 +226,13 @@ public class MainActivity extends BaseActivity implements ConversionListener {
         Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);
+    }
+
+    @Override
+    public void onUserClicked(User user) {
+        Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
+        intent.putExtra(Constants.KEY_USER,user);
+        startActivity(intent);
+        finish();
     }
 }

@@ -1,7 +1,6 @@
 package tech.demoproject.android_chat_app.adapter;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
