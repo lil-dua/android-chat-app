@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.transition.AutoTransition;
+import android.transition.TransitionManager;
 import android.util.Base64;
 import android.view.View;
 import android.widget.Toast;
@@ -15,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -92,7 +95,10 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
     }
 
     private void onSelectedEvent() {
+        TransitionManager.beginDelayedTransition(binding.constraintMain, new AutoTransition());
         if(Objects.equals(keyType, Constants.VIEW_TYPE_CONVERSATIONS)) {
+            //set title
+            binding.textTitle.setText(R.string.recent_conversations);
             //set color
             binding.textConversations.setBackgroundResource(R.drawable.background_primary);
             binding.textConversations.setTextColor(ContextCompat.getColor(this,R.color.white));
@@ -103,6 +109,8 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
             binding.conversationRecycleView.setAdapter(conversationAdapter);
 
         }else {
+            //set title
+            binding.textTitle.setText(R.string.all_friends);
             //set color
             binding.textFriends.setBackgroundResource(R.drawable.background_primary);
             binding.textFriends.setTextColor(ContextCompat.getColor(this,R.color.white));
@@ -110,6 +118,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
             binding.textConversations.setTextColor(ContextCompat.getColor(this,R.color.secondary_text));
 
             //init view
+            getUsers();
             binding.conversationRecycleView.setAdapter(userAdapter);
         }
     }
@@ -135,6 +144,36 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
         database.collection(Constants.KEY_COLLECTION_CONVERSATIONS)
                 .whereEqualTo(Constants.KEY_RECEIVED_ID,preferenceManager.getString(Constants.KEY_USER_ID))
                 .addSnapshotListener(eventListener);
+    }
+
+    private void getUsers(){
+        FirebaseFirestore database = FirebaseFirestore.getInstance();
+        database.collection(Constants.KEY_COLLECTION_USER)
+                .get()
+                .addOnCompleteListener(task -> {
+                    String currentUserId = preferenceManager.getString(Constants.KEY_USER_ID);
+                    //-------------------------------1--------------------------------------
+                    if(task.isSuccessful() && task.getResult() != null){
+                        //---------------------------2-----------------------------
+                        for (QueryDocumentSnapshot queryDocumentSnapshot : task.getResult()){
+                            if(currentUserId.equals(queryDocumentSnapshot.getId())){
+                                continue;
+                            }
+                            User user = new User();
+                            user.name = queryDocumentSnapshot.getString(Constants.KEY_NAME);
+                            user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
+                            user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
+                            user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                            user.id = queryDocumentSnapshot.getId();
+                            users.add(user);
+                        }
+                        //---------------------------2-----------------------------
+                        if(users.size() > 0){
+                            binding.conversationRecycleView.setAdapter(userAdapter);
+                        }
+
+                    }
+                });
     }
 
     private final EventListener<QuerySnapshot> eventListener = (value, error ) -> {
@@ -178,7 +217,6 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
             conversationAdapter.notifyDataSetChanged();
             binding.conversationRecycleView.smoothScrollToPosition(0);
             binding.conversationRecycleView.setVisibility(View.VISIBLE);
-            binding.progressBar.setVisibility(View.GONE);
         }
     };
 
@@ -233,6 +271,5 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
         Intent intent = new Intent(getApplicationContext(),ChatActivity.class);
         intent.putExtra(Constants.KEY_USER,user);
         startActivity(intent);
-        finish();
     }
 }

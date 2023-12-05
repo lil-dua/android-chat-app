@@ -15,4 +15,16 @@
     <string name="online">Online</string>
     <string name="conversations">Conversation</string>
     <string name="friends">Friend</string>
+    <string name="all_friends">All Friend</string>
+    <string name="recent_conversations">Recent Conversations</string>
+    <string name="new_here_register">New Here? Register</string>
+    <string name="facebook">Facebook</string>
+    <string name="google">Google</string>
+    <string name="email_address">Email Address</string>
+    <string name="or_login_using_social_media">Or login using Social Media</string>
+    <string name="register">Register</string>
+    <string name="user_name">User Name</string>
+    <string name="create_nnew_account">Create \nNew Account</string>
+    <string name="already_have_an_account_login">Already have an account? Login</string>
+    <string name="forgot_your_password">Forgot your password</string>
 </resources>

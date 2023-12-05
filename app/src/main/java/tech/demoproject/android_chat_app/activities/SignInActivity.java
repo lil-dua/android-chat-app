@@ -44,7 +44,7 @@ public class SignInActivity extends AppCompatActivity {
 
     private void setListeners(){
         // you can see: an instance of a binding class contains direct references to all view that have an ID in the corresponding layout
-        binding.textCreateNewAccount.setOnClickListener(v ->
+        binding.textRegister.setOnClickListener(v ->
                 startActivity(new Intent(getApplicationContext(),SignUpActivity.class)));
         // set onClick for button Sign In
         binding.buttonSignIn.setOnClickListener(v -> {
