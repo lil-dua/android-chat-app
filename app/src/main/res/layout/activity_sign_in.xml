@@ -89,6 +89,7 @@
                 android:layout_height="match_parent"
                 android:drawableStart="@drawable/ic_password"
                 android:drawablePadding="20sp"
+                android:inputType="textPassword"
                 android:textColor="@color/white"
                 android:textSize="17sp"/>
 
