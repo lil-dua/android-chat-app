@@ -64,6 +64,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="@font/lato_regular"
                 android:text="@string/add_image"
                 android:textColor="@color/primary"
                 android:textSize="@dimen/_10ssp"/>
@@ -192,6 +193,7 @@
                 android:id="@+id/buttonSignUp"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
+                android:fontFamily="@font/lato_regular"
                 android:text="@string/sign_up"
                 android:textColor="@color/primary"
                 android:backgroundTint="@color/white"
@@ -212,6 +214,7 @@
             android:id="@+id/text_sign_in"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/lato_regular"
             android:text="@string/already_have_an_account_login"
             android:gravity="center_horizontal"
             android:textStyle="bold"

@@ -82,6 +82,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
         binding.fabNewChat.setOnClickListener(v -> startActivity(new Intent(getApplicationContext(),UsersActivity.class)));
         binding.textConversations.setOnClickListener(v -> onRecentConversationClick());
         binding.textFriends.setOnClickListener(v -> onFriendClick());
+        binding.imageSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchUserActivity.class)));
     }
 
     private void onRecentConversationClick() {

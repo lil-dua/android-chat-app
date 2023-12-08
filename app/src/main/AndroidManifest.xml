@@ -4,8 +4,9 @@
     package="tech.demoproject.android_chat_app">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" tools:node="remove"/>
-
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS"
+        tools:node="remove" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Androidchatapp">
         <activity
-            android:name=".activities.ChatActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:name=".activities.SearchUserActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.ChatActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.UsersActivity"
             android:exported="false" />

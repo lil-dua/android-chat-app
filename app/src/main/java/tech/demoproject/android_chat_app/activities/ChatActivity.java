@@ -184,8 +184,10 @@ public class ChatActivity extends BaseActivity {
                     }
                     if(isReceiveAvailable){
                         binding.textAvailability.setVisibility(View.VISIBLE);
+                        binding.textNotAvailability.setVisibility(View.GONE);
                     }else {
-                        binding.textAvailability.setVisibility(View.INVISIBLE);
+                        binding.textAvailability.setVisibility(View.GONE);
+                        binding.textNotAvailability.setVisibility(View.VISIBLE);
                     }
                 });
     }
