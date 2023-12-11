@@ -4,6 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingVertical="24dp"
+    android:background="@color/primary_background_color"
+    android:paddingHorizontal="10dp"
     tools:context=".activities.SearchUserActivity">
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/search_view"
+            app:queryHint="Search user..."
+            android:background="@drawable/background_white"
+            app:queryBackground="@android:color/transparent"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="10dp"
+            android:elevation="@dimen/_2sdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_cancel"
+            app:iconifiedByDefault="false"/>
+
+        <TextView
+            android:id="@+id/text_cancel"
+            android:padding="7dp"
+            android:background="@drawable/background_primary"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="@id/search_view"
+            app:layout_constraintBottom_toBottomOf="@id/search_view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/search_view"/>
+
+    <TextView
+        android:id="@+id/text_recommend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/recommend_for_you"
+        android:textColor="@color/primary"
+        android:textSize="@dimen/_13sdp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lato_regular"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toBottomOf="@id/search_view"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycle_view_contacts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="10dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/text_recommend"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

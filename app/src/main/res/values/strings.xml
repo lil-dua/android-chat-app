@@ -28,4 +28,7 @@
     <string name="already_have_an_account_login">Already have an account? Login</string>
     <string name="forgot_your_password">Forgot your password</string>
     <string name="offline">Offline</string>
+    <string name="cancel">Cancel</string>
+    <string name="recommend_for_you">Recommend for you</string>
+    <string name="write_your_message">Write your message</string>
 </resources>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
-    android:background="@color/white"
+    android:background="@color/primary_background_color"
     android:id="@+id/constraint_main"
     tools:context=".activities.MainActivity">
 
@@ -133,23 +133,24 @@
             android:textStyle="bold"
             android:textColor="@color/primary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/_20sdp"
+            android:layout_height="80dp"
+            android:gravity="bottom"
             android:paddingStart="@dimen/_20sdp"
+            android:paddingBottom="@dimen/_10sdp"
             android:background="@drawable/background_content_bottom"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="RtlSymmetry" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/conversationRecycleView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:background="@color/white"
+            android:background="@color/primary_background_color"
             android:clipToPadding="false"
             android:orientation="vertical"
             android:overScrollMode="never"
             android:paddingHorizontal="@dimen/_20sdp"
-            android:paddingTop="@dimen/_10sdp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/text_title"

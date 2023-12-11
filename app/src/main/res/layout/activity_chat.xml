@@ -36,6 +36,7 @@
         android:layout_height="@dimen/_40sdp"
         android:layout_marginStart="@dimen/_10sdp"
         android:src="@drawable/ic_user"
+        android:scaleType="centerCrop"
         app:layout_constraintTop_toTopOf="@id/imageBack"
         app:layout_constraintBottom_toBottomOf="@id/imageBack"
         app:layout_constraintStart_toEndOf="@id/imageBack"
@@ -114,7 +115,7 @@
             android:id="@+id/input_message"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:hint="Write your message"
+            android:hint="@string/write_your_message"
             android:fontFamily="@font/lato_regular"
             android:textSize="17sp"
             android:inputType="text"
@@ -148,6 +149,29 @@
             android:layout_height="24dp"/>
     </FrameLayout>
 
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/view_availability"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
+        android:src="@color/white"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layout_constraintTop_toBottomOf="@id/textName"
+        app:layout_constraintBottom_toBottomOf="@id/receiver_image"
+        app:layout_constraintStart_toStartOf="@id/textName"
+        app:riv_oval="true"/>
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/view_not_availability"
+        android:layout_width="@dimen/_5sdp"
+        android:layout_height="@dimen/_5sdp"
+        android:src="@color/offline"
+        android:layout_marginTop="@dimen/_5sdp"
+        app:layout_constraintTop_toBottomOf="@id/textName"
+        app:layout_constraintBottom_toBottomOf="@id/receiver_image"
+        app:layout_constraintStart_toStartOf="@id/textName"
+        app:riv_oval="true"/>
+
     <TextView
         android:id="@+id/textAvailability"
         android:layout_width="wrap_content"
@@ -158,10 +182,11 @@
         android:fontFamily="@font/lato_regular"
         android:gravity="center"
         android:padding="@dimen/_2sdp"
-        android:layout_marginTop="@dimen/_5sdp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/textName"
-        app:layout_constraintStart_toStartOf="@id/textName"/>
+        android:layout_marginStart="@dimen/_5sdp"
+        app:layout_constraintTop_toTopOf="@id/view_availability"
+        app:layout_constraintBottom_toBottomOf="@id/view_availability"
+        app:layout_constraintStart_toEndOf="@id/view_availability"/>
 
     <TextView
         android:id="@+id/text_not_availability"
@@ -173,8 +198,11 @@
         android:fontFamily="@font/lato_regular"
         android:gravity="center"
         android:padding="@dimen/_2sdp"
-        android:layout_marginTop="@dimen/_5sdp"
-        app:layout_constraintTop_toBottomOf="@id/textName"
-        app:layout_constraintStart_toStartOf="@id/textName"/>
+        android:layout_marginStart="@dimen/_5sdp"
+        app:layout_constraintTop_toTopOf="@id/view_not_availability"
+        app:layout_constraintBottom_toBottomOf="@id/view_not_availability"
+        app:layout_constraintStart_toEndOf="@id/view_not_availability"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

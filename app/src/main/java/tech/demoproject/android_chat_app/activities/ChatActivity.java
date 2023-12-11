@@ -185,9 +185,13 @@ public class ChatActivity extends BaseActivity {
                     if(isReceiveAvailable){
                         binding.textAvailability.setVisibility(View.VISIBLE);
                         binding.textNotAvailability.setVisibility(View.GONE);
+                        binding.viewAvailability.setVisibility(View.VISIBLE);
+                        binding.viewNotAvailability.setVisibility(View.GONE);
                     }else {
                         binding.textAvailability.setVisibility(View.GONE);
                         binding.textNotAvailability.setVisibility(View.VISIBLE);
+                        binding.viewAvailability.setVisibility(View.GONE);
+                        binding.viewNotAvailability.setVisibility(View.VISIBLE);
                     }
                 });
     }
@@ -252,6 +256,7 @@ public class ChatActivity extends BaseActivity {
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
         binding.textName.setText(receiverUser.name);
+        binding.receiverImage.setImageBitmap(getBitmapFromEncodedString(receiverUser.image));
     }
 
     private void setListeners(){

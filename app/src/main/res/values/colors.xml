@@ -11,6 +11,7 @@
     <color name="received_message_background">#090D16</color>
     <color name="primary_background_color">#F9F9F9</color>
     <color name="green">#008000</color>
+    <color name="offline">#E91E63</color>
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">#fff</color>
 
 </resources>
