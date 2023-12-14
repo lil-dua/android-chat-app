@@ -74,7 +74,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
         database = FirebaseFirestore.getInstance();
         conversationAdapter = new RecentConversationAdapter(conversations,this);
         binding.conversationRecycleView.setAdapter(conversationAdapter);
-        userAdapter = new UserAdapter(users,this);
+        userAdapter = new UserAdapter(this);
     }
 
     private void setListeners(){
@@ -120,7 +120,6 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
 
             //init view
             getUsers();
-            binding.conversationRecycleView.setAdapter(userAdapter);
         }
     }
 
@@ -171,6 +170,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
                         //---------------------------2-----------------------------
                         if(users.size() > 0){
                             binding.conversationRecycleView.setAdapter(userAdapter);
+                            userAdapter.setData(users);
                         }
 
                     }

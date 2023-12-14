@@ -4,12 +4,15 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import tech.demoproject.android_chat_app.adapter.UserAdapter;
 import tech.demoproject.android_chat_app.databinding.ActivitySearchUserBinding;
@@ -30,24 +33,38 @@ public class SearchUserActivity extends AppCompatActivity implements UserListene
         setContentView(binding.getRoot());
 
         fetchData();
-        initViews();
         setActions();
     }
 
     private void fetchData() {
         preferenceManager = new PreferenceManager(getApplicationContext());
-
         users = new ArrayList<>();
-        userAdapter = new UserAdapter(users,this);
+        userAdapter = new UserAdapter(this);
         getUsers();
     }
 
-    private void initViews() {
-
-    }
 
     private void setActions() {
         binding.textCancel.setOnClickListener(v -> onBackPressed());
+
+        //search user
+        // Search user
+        binding.searchView.clearFocus();
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterListContact(
+                        newText,
+                        users != null ? users : Collections.emptyList(),
+                        userAdapter);
+                return true;
+            }
+        });
     }
     private void getUsers(){
         FirebaseFirestore database = FirebaseFirestore.getInstance();
@@ -73,10 +90,26 @@ public class SearchUserActivity extends AppCompatActivity implements UserListene
                         //---------------------------2-----------------------------
                         if(users.size() > 0){
                             binding.recycleViewContacts.setAdapter(userAdapter);
+                            userAdapter.setData(users);
                         }
 
                     }
                 });
+    }
+
+    private void filterListContact(String text, List<User> users, UserAdapter adapter) {
+        List<User> filterList = new ArrayList<>();
+        for (User user : users) {
+            if (user.name.toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault())) ||
+                    user.email.toLowerCase(Locale.getDefault()).contains(text.toLowerCase(Locale.getDefault()))) {
+                filterList.add(user);
+            }
+        }
+        if (filterList.isEmpty()) {
+            adapter.setData(Collections.emptyList());
+        } else {
+            adapter.setData(filterList);
+        }
     }
 
     @Override

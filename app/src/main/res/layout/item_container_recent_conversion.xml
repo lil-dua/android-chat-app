@@ -2,18 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="@dimen/_10sdp"
+    android:paddingVertical="@dimen/_12sdp"
+    android:layout_marginBottom="@dimen/_7sdp"
+    android:elevation="@dimen/_2sdp"
+    android:background="@drawable/background_white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/imageProfile"
         android:layout_width="@dimen/_45sdp"
         android:layout_height="@dimen/_45sdp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="@dimen/_5sdp"
         android:scaleType="centerCrop"
         android:src="@color/primary"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:riv_corner_radius="20dp"/>
+        app:riv_corner_radius="20dp" />
 
     <TextView
         android:id="@+id/textName"
@@ -37,14 +42,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/_10sdp"
-        android:layout_marginEnd="@dimen/_8sdp"
-        android:layout_marginTop="@dimen/_3sdp"
+        android:layout_marginTop="@dimen/_5sdp"
         android:ellipsize="end"
         android:fontFamily="@font/lato_regular"
-        android:maxLines="1"
+        android:maxLines="2"
         android:textColor="@color/secondary_text"
         android:textSize="@dimen/_11ssp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/textDateTime"
         app:layout_constraintTop_toBottomOf="@id/textName"
         app:layout_constraintStart_toEndOf="@id/imageProfile"/>
 
@@ -52,7 +56,7 @@
         android:id="@+id/textDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/_9sdp"
+        android:textSize="@dimen/_10sdp"
         android:textColor="@color/primary"
         android:fontFamily="@font/lato_regular"
         android:text="123123"

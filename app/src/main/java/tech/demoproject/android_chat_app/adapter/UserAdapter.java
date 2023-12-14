@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -20,13 +21,12 @@ import tech.demoproject.android_chat_app.models.User;
  */
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder>{
 
-    private final List<User> user;
+    private List<User> users;
     private final UserListener userListener;
 
     ItemContainerUserBinding binding;
 
-    public UserAdapter(List<User> user, UserListener userListener) {
-        this.user = user;
+    public UserAdapter(UserListener userListener) {
         this.userListener = userListener;
     }
 
@@ -43,12 +43,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.setUserData(user.get(position));
+        holder.setUserData(users.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return user.size();
+        return users != null ? users.size() : 0;
     }
 
     class UserViewHolder extends RecyclerView.ViewHolder {
@@ -71,5 +71,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     private Bitmap getUserImage(String encodedImage){
         byte[] bytes = Base64.decode(encodedImage,Base64.DEFAULT);
         return BitmapFactory.decodeByteArray(bytes,0, bytes.length);
+    }
+
+    public void setData(List<User> newList) {
+        UserDiffCallback diffCallback = new UserDiffCallback(users, newList);
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
+        users = newList;
+        diffResult.dispatchUpdatesTo(this);
     }
 }

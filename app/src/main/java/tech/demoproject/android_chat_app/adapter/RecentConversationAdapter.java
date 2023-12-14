@@ -2,14 +2,20 @@ package tech.demoproject.android_chat_app.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.format.DateUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import tech.demoproject.android_chat_app.databinding.ItemContainerRecentConversionBinding;
 import tech.demoproject.android_chat_app.listeners.ConversionListener;
@@ -64,7 +70,7 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
            binding.imageProfile.setImageBitmap(getConversionImage(chatMessage.conversionImage));
            binding.textName.setText(chatMessage.conversionName);
            binding.textRecentMessage.setText(chatMessage.message);
-           binding.textDateTime.setText(chatMessage.dateTime);
+           binding.textDateTime.setText(getTimeAgo(chatMessage.dateObject.toString()));
            binding.getRoot().setOnClickListener(v -> {
                User user = new User();
                user.id = chatMessage.conversionId;
@@ -74,6 +80,23 @@ public class RecentConversationAdapter extends RecyclerView.Adapter<RecentConver
            });
        }
 
+    }
+
+    public static String getTimeAgo(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+
+        try {
+            Date date = dateFormat.parse(dateString);
+            long timeInMillis = date.getTime();
+            long currentTimeMillis = System.currentTimeMillis();
+
+            return DateUtils.getRelativeTimeSpanString(timeInMillis, currentTimeMillis, DateUtils.MINUTE_IN_MILLIS, DateUtils.FORMAT_ABBREV_RELATIVE).toString();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
     private Bitmap getConversionImage(String encodedImage){

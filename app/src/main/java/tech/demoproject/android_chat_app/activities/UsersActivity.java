@@ -62,7 +62,8 @@ public class UsersActivity extends BaseActivity implements UserListener {
                         }
                         //---------------------------2-----------------------------
                         if(users.size() > 0){
-                            UserAdapter userAdapter = new UserAdapter(users,this);
+                            UserAdapter userAdapter = new UserAdapter(this);
+                            userAdapter.setData(users);
                             binding.usersRecycleView.setAdapter(userAdapter);
                             binding.usersRecycleView.setVisibility(View.VISIBLE);
                         }else{
