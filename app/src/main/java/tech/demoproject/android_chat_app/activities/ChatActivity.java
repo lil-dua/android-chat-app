@@ -41,6 +41,7 @@ import tech.demoproject.android_chat_app.models.User;
 import tech.demoproject.android_chat_app.network.ApiClient;
 import tech.demoproject.android_chat_app.network.ApiService;
 import tech.demoproject.android_chat_app.utilities.Constants;
+import tech.demoproject.android_chat_app.utilities.EncryptionUtils;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
 public class ChatActivity extends BaseActivity {
@@ -79,48 +80,58 @@ public class ChatActivity extends BaseActivity {
 
     // send message
     private void sendMessage(){
-        HashMap<String, Object> message = new HashMap<>();
-        message.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
-        message.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
-        message.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString());
-        message.put(Constants.KEY_TIMESTAMP,new Date());
-        database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
-        if(conversionId != null){
-            updateConversion(binding.inputMessage.getText().toString());
-        }else {
-            HashMap<String, Object> conversion  =  new HashMap<>();
-            conversion.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
-            conversion.put(Constants.KEY_SENDER_NAME,preferenceManager.getString(Constants.KEY_NAME));
-            conversion.put(Constants.KEY_SENDER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
-            conversion.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
-            conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name);
-            conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image);
-            conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString());
-            conversion.put(Constants.KEY_TIMESTAMP,new Date());
-            addConversion(conversion);
-        }
-        //push notification
-        if(!isReceiveAvailable){
-            try {
-                JSONArray tokens = new JSONArray();
-                tokens.put(receiverUser.token);
+        try {
+            EncryptionUtils encryptionUtils = new EncryptionUtils();
+            String cipherText = encryptionUtils.encryptMessage(binding.inputMessage.getText().toString());
 
-                JSONObject data = new JSONObject();
-                data.put(Constants.KEY_USER,preferenceManager.getString(Constants.KEY_USER_ID));
-                data.put(Constants.KEY_NAME,preferenceManager.getString(Constants.KEY_NAME));
-                data.put(Constants.KEY_FCM_TOKEN,preferenceManager.getString(Constants.KEY_FCM_TOKEN));
-                data.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString());
-
-                JSONObject body = new JSONObject();
-                body.put(Constants.REMOTE_MSG_DATA,data);
-                body.put(Constants.REMOTE_MSG_REGISTRATION_IDS,tokens);
-
-                sendNotification(body.toString());
-            }catch (Exception exception){
-                showToast(exception.getMessage());
+            HashMap<String, Object> message = new HashMap<>();
+            message.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
+            message.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
+            message.put(Constants.KEY_MESSAGE,cipherText);
+            message.put(Constants.KEY_TIMESTAMP,new Date());
+            message.put(Constants.KEY_IV,encryptionUtils.ivStringKey);
+            database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+            if(conversionId != null){
+                updateConversion(binding.inputMessage.getText().toString());
+            }else {
+                HashMap<String, Object> conversion  =  new HashMap<>();
+                conversion.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
+                conversion.put(Constants.KEY_SENDER_NAME,preferenceManager.getString(Constants.KEY_NAME));
+                conversion.put(Constants.KEY_SENDER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
+                conversion.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
+                conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name);
+                conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image);
+                conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString());
+                conversion.put(Constants.KEY_TIMESTAMP,new Date());
+                addConversion(conversion);
             }
+            //push notification
+            if(!isReceiveAvailable){
+                try {
+                    JSONArray tokens = new JSONArray();
+                    tokens.put(receiverUser.token);
+
+                    JSONObject data = new JSONObject();
+                    data.put(Constants.KEY_USER,preferenceManager.getString(Constants.KEY_USER_ID));
+                    data.put(Constants.KEY_NAME,preferenceManager.getString(Constants.KEY_NAME));
+                    data.put(Constants.KEY_FCM_TOKEN,preferenceManager.getString(Constants.KEY_FCM_TOKEN));
+                    data.put(Constants.KEY_MESSAGE,binding.inputMessage.getText().toString());
+
+                    JSONObject body = new JSONObject();
+                    body.put(Constants.REMOTE_MSG_DATA,data);
+                    body.put(Constants.REMOTE_MSG_REGISTRATION_IDS,tokens);
+
+                    sendNotification(body.toString());
+                }catch (Exception exception){
+                    showToast(exception.getMessage());
+                }
+            }
+            binding.inputMessage.setText(null);
+
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        binding.inputMessage.setText(null);
+
     }
 
     //messaging notification
@@ -224,6 +235,7 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessage.iv = documentChange.getDocument().getString(Constants.KEY_IV);
                     chatMessages.add(chatMessage);
                 }
 

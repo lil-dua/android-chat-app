@@ -12,7 +12,7 @@
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view"
             app:queryHint="Search user..."
-            android:background="@drawable/background_white"
+            android:background="@drawable/background_corner_white"
             app:queryBackground="@android:color/transparent"
             android:layout_width="0dp"
             android:layout_height="50dp"

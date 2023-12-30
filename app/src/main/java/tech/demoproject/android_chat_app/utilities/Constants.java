@@ -6,6 +6,8 @@ import java.util.HashMap;
  * Created by HoangRyan aka LilDua on 9/22/2022.
  */
 public class Constants {
+    public static final String SECRET_KEY = "iWtdw7On7pJ5XKb0dVVcqFC6GnSfFOfTYX6UKPvaTfQ=";
+    public static final String SALT = "QWlGNHNhMTJTOWZ2bGhpV3U=";
     public static final String KEY_COLLECTION_USER = "test_user";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
@@ -17,13 +19,14 @@ public class Constants {
     public static final String KEY_FCM_TOKEN = "fcmToken";
     public static final String KEY_USER = "user";
     // chat
-    public static final String KEY_COLLECTION_CHAT = "chat";
+    public static final String KEY_COLLECTION_CHAT = "test_chat";
     public static final String KEY_SENDER_ID = "senderId";
     public static final String KEY_RECEIVED_ID = "receiverId";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_TIMESTAMP = "timestamp";
+    public static final String KEY_IV = "iv";
     // recent conversations
-    public static final String KEY_COLLECTION_CONVERSATIONS = "conversations";
+    public static final String KEY_COLLECTION_CONVERSATIONS = "test_conversations";
     public static final String KEY_SENDER_NAME = "senderName";
     public static final String KEY_RECEIVER_NAME = "receiverName";
     public static final String KEY_SENDER_IMAGE = "senderImage";

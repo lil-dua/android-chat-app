@@ -200,6 +200,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
                     }
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
+                    chatMessage.iv = documentChange.getDocument().getString(Constants.KEY_IV);
                     conversations.add(chatMessage);
                 }else if(documentChange.getType() == DocumentChange.Type.MODIFIED){
                     for(int i = 0; i < conversations.size(); i++){

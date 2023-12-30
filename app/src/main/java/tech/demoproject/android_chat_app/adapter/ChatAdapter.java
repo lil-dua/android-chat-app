@@ -12,6 +12,7 @@ import java.util.List;
 import tech.demoproject.android_chat_app.databinding.ItemContainerReceivedMessageBinding;
 import tech.demoproject.android_chat_app.databinding.ItemContainerSentMessageBinding;
 import tech.demoproject.android_chat_app.models.ChatMessage;
+import tech.demoproject.android_chat_app.utilities.EncryptionUtils;
 
 /***
  * Created by HoangRyan aka LilDua on 9/24/2022.
@@ -94,8 +95,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
 
         void setData(ChatMessage chatMessage){
-            binding.textMessage.setText(chatMessage.message);
-            binding.textDateTime.setText(chatMessage.dateTime);
+            try {
+                EncryptionUtils encryptionUtils = new EncryptionUtils();
+                String decryptedMessage
+                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
+                binding.textMessage.setText(decryptedMessage);
+                binding.textDateTime.setText(chatMessage.dateTime);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
     }
@@ -112,8 +120,15 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
 
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage){
-            binding.textMessage.setText(chatMessage.message);
-            binding.textDateTime.setText(chatMessage.dateTime);
+            try {
+                EncryptionUtils encryptionUtils = new EncryptionUtils();
+                String decryptedMessage
+                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
+                binding.textMessage.setText(decryptedMessage);
+                binding.textDateTime.setText(chatMessage.dateTime);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             if(receiverProfileImage != null){
                 binding.imageProfile.setImageBitmap(receiverProfileImage);
             }
