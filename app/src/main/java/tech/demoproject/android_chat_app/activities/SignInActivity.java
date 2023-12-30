@@ -2,6 +2,7 @@ package tech.demoproject.android_chat_app.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -13,6 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import tech.demoproject.android_chat_app.databinding.ActivitySignInBinding;
 import tech.demoproject.android_chat_app.utilities.Constants;
+import tech.demoproject.android_chat_app.utilities.PasswordHasher;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
 
@@ -64,7 +66,10 @@ public class SignInActivity extends AppCompatActivity {
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         database.collection(Constants.KEY_COLLECTION_USER)
                 .whereEqualTo(Constants.KEY_EMAIL, binding.inputEmail.getText().toString())
-                .whereEqualTo(Constants.KEY_PASSWORD, binding.inputPassword.getText().toString())
+                .whereEqualTo(
+                        Constants.KEY_PASSWORD,
+                        // check input password after hash
+                        hashPassword(binding.inputPassword.getText().toString()))
                 .get()
                 .addOnCompleteListener(task -> {
                     //when sign in success
@@ -86,6 +91,18 @@ public class SignInActivity extends AppCompatActivity {
                         showToast("Unable to sign in");
                     }
                 });
+        Log.i("HashedPassword", "signIn: " + hashPassword(binding.inputPassword.getText().toString()));
+
+    }
+
+    private String hashPassword(String password) {
+        PasswordHasher hash = new PasswordHasher();
+        try {
+            return hash.hashPassword(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Check valid sign in

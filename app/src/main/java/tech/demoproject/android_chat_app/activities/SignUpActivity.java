@@ -1,9 +1,5 @@
 package tech.demoproject.android_chat_app.activities;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,9 +7,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -24,6 +25,7 @@ import java.util.HashMap;
 
 import tech.demoproject.android_chat_app.databinding.ActivitySignUpBinding;
 import tech.demoproject.android_chat_app.utilities.Constants;
+import tech.demoproject.android_chat_app.utilities.PasswordHasher;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -75,7 +77,11 @@ public class SignUpActivity extends AppCompatActivity {
         HashMap<String,Object> user = new HashMap<>();
         user.put(Constants.KEY_NAME, binding.inputName.getText().toString());
         user.put(Constants.KEY_EMAIL,binding.inputEmail.getText().toString());
-        user.put(Constants.KEY_PASSWORD,binding.inputPassword.getText().toString());
+        //put hashed password
+        user.put(
+                Constants.KEY_PASSWORD,
+                hashPassword(binding.inputPassword.getText().toString())
+        );
         user.put(Constants.KEY_IMAGE,encodeImage);
         database.collection(Constants.KEY_COLLECTION_USER)
                 .add(user)
@@ -96,6 +102,18 @@ public class SignUpActivity extends AppCompatActivity {
                     loading(false);
                     showToast(exception.getMessage());
                 });
+
+        Log.i("HashedPassword", "signUp: " + hashPassword(binding.inputPassword.getText().toString()));
+    }
+
+    private String hashPassword(String password) {
+        PasswordHasher hash = new PasswordHasher();
+        try {
+            return hash.hashPassword(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // this function will encode an image you choose in gallery.
