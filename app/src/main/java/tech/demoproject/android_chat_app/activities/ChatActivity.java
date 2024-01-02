@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -70,10 +69,16 @@ public class ChatActivity extends BaseActivity {
     private void init(){
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
+
+        byte[] userPrivateKey = Base64.decode(
+                preferenceManager.getString(Constants.KEY_USER_PRIVATE_KEY),
+                Base64.URL_SAFE);
+
         chatAdapter = new ChatAdapter(
                 chatMessages,
                 getBitmapFromEncodedString(receiverUser.image),
-                preferenceManager.getString(Constants.KEY_USER_ID)
+                preferenceManager.getString(Constants.KEY_USER_ID),
+                userPrivateKey
         );
         binding.chatRecycleView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
@@ -83,21 +88,21 @@ public class ChatActivity extends BaseActivity {
     // send message
     private void sendMessage(){
         try {
+            String inputMessage = binding.inputMessage.getText().toString();
+            byte[] receiverPublicKey = Base64.decode(receiverUser.publicKey, Base64.URL_SAFE);
+
             EncryptionUtils encryptionUtils = new EncryptionUtils();
-            byte[] receiverPublicKey = receiverUser.publicKey.toString().getBytes();
             byte[] encryptedBytes = encryptionUtils.encryptMessage(
-                    binding.inputMessage.getText().toString(),
+                    inputMessage,
                     receiverPublicKey);
 
-            String cipherText = Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
-
+            String cipherText = Base64.encodeToString(encryptedBytes, Base64.URL_SAFE);
 
             HashMap<String, Object> message = new HashMap<>();
             message.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
             message.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
             message.put(Constants.KEY_MESSAGE,cipherText);
             message.put(Constants.KEY_TIMESTAMP,new Date());
-//            message.put(Constants.KEY_IV,encryptionUtils.ivStringKey);
             database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
             if(conversionId != null){
                 updateConversion(binding.inputMessage.getText().toString());
@@ -106,12 +111,11 @@ public class ChatActivity extends BaseActivity {
                 conversion.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
                 conversion.put(Constants.KEY_SENDER_NAME,preferenceManager.getString(Constants.KEY_NAME));
                 conversion.put(Constants.KEY_SENDER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
-                conversion.put(Constants.KEY_SENDER_PUBLIC_KEY,preferenceManager.getString(Constants.KEY_USER_PRIVATE_KEY));
+                conversion.put(Constants.KEY_SENDER_PUBLIC_KEY,preferenceManager.getString(Constants.KEY_USER_PUBLIC_KEY));
                 conversion.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
                 conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name);
                 conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image);
                 conversion.put(Constants.KEY_RECEIVER_PUBLIC_KEY,receiverUser.publicKey);
-                Log.i("ChatActivity", "sendMessage: " + receiverUser.publicKey);
                 conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString());
                 conversion.put(Constants.KEY_TIMESTAMP,new Date());
                 addConversion(conversion);
@@ -278,7 +282,6 @@ public class ChatActivity extends BaseActivity {
 
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
-        Log.i("ChatActivity", "loadReceiverDetails: "+receiverUser.publicKey);
         binding.textName.setText(receiverUser.name);
         binding.receiverImage.setImageBitmap(getBitmapFromEncodedString(receiverUser.image));
     }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -36,8 +37,8 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
 
     private PreferenceManager preferenceManager;
-    private String publicKey;
-    private String privateKey;
+    private byte[] publicKey;
+    private byte[] privateKey;
     private String encodeImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +90,8 @@ public class SignUpActivity extends AppCompatActivity {
         );
         user.put(Constants.KEY_IMAGE,encodeImage);
         // put user key to database
-        user.put(Constants.KEY_USER_PUBLIC_KEY,publicKey.toString());
-        user.put(Constants.KEY_USER_PRIVATE_KEY,privateKey.toString());
+        user.put(Constants.KEY_USER_PUBLIC_KEY,convertKeyToString(publicKey));
+        user.put(Constants.KEY_USER_PRIVATE_KEY,convertKeyToString(privateKey));
         database.collection(Constants.KEY_COLLECTION_USER)
                 .add(user)
                 //when sign upp an account success
@@ -101,8 +102,8 @@ public class SignUpActivity extends AppCompatActivity {
                     preferenceManager.putString(Constants.KEY_NAME,binding.inputName.getText().toString());
                     preferenceManager.putString(Constants.KEY_IMAGE,encodeImage);
                     // user key
-                    preferenceManager.putString(Constants.KEY_USER_PUBLIC_KEY,publicKey.toString());
-                    preferenceManager.putString(Constants.KEY_USER_PRIVATE_KEY,privateKey.toString());
+                    preferenceManager.putString(Constants.KEY_USER_PUBLIC_KEY,convertKeyToString(publicKey));
+                    preferenceManager.putString(Constants.KEY_USER_PRIVATE_KEY,convertKeyToString(privateKey));
 
                     // Access to MainActivity
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -120,11 +121,18 @@ public class SignUpActivity extends AppCompatActivity {
         EncryptionUtils encryptionUtils = new EncryptionUtils();
         try {
             KeyPair userKey = encryptionUtils.generateKeyPair();
-            publicKey = userKey.getPublic().toString();
-            privateKey = userKey.getPrivate().toString();
+            publicKey = userKey.getPublic().getEncoded();
+            privateKey = userKey.getPrivate().getEncoded();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String convertKeyToString(byte[] key) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return  Base64.encodeToString(key, Base64.URL_SAFE);
+        }
+        return "";
     }
 
     private String hashPassword(String password) {

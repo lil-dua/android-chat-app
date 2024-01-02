@@ -1,6 +1,7 @@
 package tech.demoproject.android_chat_app.adapter;
 
 import android.graphics.Bitmap;
+import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -22,6 +23,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     private final List<ChatMessage> chatMessages;
     private Bitmap receiverProfileImage;
     private final String senderId;
+    private static byte[] senderPublicKey;
 
     public static final int VIEW_TYPE_SENT = 1;
     public static final int VIEW_TYPE_RECEIVED = 2;
@@ -30,10 +32,12 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         receiverProfileImage = bitmap;
     }
 
-    public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId) {
+    public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId,
+                       byte[] senderPublicKey) {
         this.chatMessages = chatMessages;
         this.receiverProfileImage = receiverProfileImage;
         this.senderId = senderId;
+        ChatAdapter.senderPublicKey = senderPublicKey;
     }
 
     @NonNull
@@ -96,9 +100,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         void setData(ChatMessage chatMessage){
             try {
-                EncryptionUtils encryptionUtils = new EncryptionUtils();
-//                String decryptedMessage
-//                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
+//                EncryptionUtils encryptionUtils = new EncryptionUtils();
+//                byte[] receivedMessage = Base64.decode(chatMessage.message, Base64.URL_SAFE);
+//                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,senderPublicKey);
 //                binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {
@@ -122,9 +126,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage){
             try {
                 EncryptionUtils encryptionUtils = new EncryptionUtils();
-//                String decryptedMessagesage
-//                        = encryptionUtilsls.decryptMessage(chatMessage.message, chatMessage.iv);
-//                binding.textMessage.setText(decryptedMessage);
+                byte[] receivedMessage = Base64.decode(chatMessage.message, Base64.URL_SAFE);
+                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,senderPublicKey);
+                binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {
                 throw new RuntimeException(e);
