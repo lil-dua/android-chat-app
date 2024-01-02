@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.format.DateUtils;
 import android.util.Base64;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 

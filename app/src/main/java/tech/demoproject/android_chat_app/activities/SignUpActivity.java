@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
-import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Toast;
@@ -21,10 +20,13 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.security.KeyPair;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 
 import tech.demoproject.android_chat_app.databinding.ActivitySignUpBinding;
 import tech.demoproject.android_chat_app.utilities.Constants;
+import tech.demoproject.android_chat_app.utilities.EncryptionUtils;
 import tech.demoproject.android_chat_app.utilities.PasswordHasher;
 import tech.demoproject.android_chat_app.utilities.PreferenceManager;
 
@@ -34,6 +36,8 @@ public class SignUpActivity extends AppCompatActivity {
     private ActivitySignUpBinding binding;
 
     private PreferenceManager preferenceManager;
+    private String publicKey;
+    private String privateKey;
     private String encodeImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void signUp(){
         loading(true);
+        generateUserKey();
         FirebaseFirestore database = FirebaseFirestore.getInstance();
         HashMap<String,Object> user = new HashMap<>();
         user.put(Constants.KEY_NAME, binding.inputName.getText().toString());
@@ -83,6 +88,9 @@ public class SignUpActivity extends AppCompatActivity {
                 hashPassword(binding.inputPassword.getText().toString())
         );
         user.put(Constants.KEY_IMAGE,encodeImage);
+        // put user key to database
+        user.put(Constants.KEY_USER_PUBLIC_KEY,publicKey.toString());
+        user.put(Constants.KEY_USER_PRIVATE_KEY,privateKey.toString());
         database.collection(Constants.KEY_COLLECTION_USER)
                 .add(user)
                 //when sign upp an account success
@@ -92,6 +100,10 @@ public class SignUpActivity extends AppCompatActivity {
                     preferenceManager.putString(Constants.KEY_USER_ID, documentReference.getId());
                     preferenceManager.putString(Constants.KEY_NAME,binding.inputName.getText().toString());
                     preferenceManager.putString(Constants.KEY_IMAGE,encodeImage);
+                    // user key
+                    preferenceManager.putString(Constants.KEY_USER_PUBLIC_KEY,publicKey.toString());
+                    preferenceManager.putString(Constants.KEY_USER_PRIVATE_KEY,privateKey.toString());
+
                     // Access to MainActivity
                     Intent intent = new Intent(getApplicationContext(),MainActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -102,8 +114,17 @@ public class SignUpActivity extends AppCompatActivity {
                     loading(false);
                     showToast(exception.getMessage());
                 });
+    }
 
-        Log.i("HashedPassword", "signUp: " + hashPassword(binding.inputPassword.getText().toString()));
+    private void generateUserKey() {
+        EncryptionUtils encryptionUtils = new EncryptionUtils();
+        try {
+            KeyPair userKey = encryptionUtils.generateKeyPair();
+            publicKey = userKey.getPublic().toString();
+            privateKey = userKey.getPrivate().toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private String hashPassword(String password) {

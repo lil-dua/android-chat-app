@@ -97,9 +97,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         void setData(ChatMessage chatMessage){
             try {
                 EncryptionUtils encryptionUtils = new EncryptionUtils();
-                String decryptedMessage
-                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
-                binding.textMessage.setText(decryptedMessage);
+//                String decryptedMessage
+//                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
+//                binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -122,9 +122,9 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         void setData(ChatMessage chatMessage, Bitmap receiverProfileImage){
             try {
                 EncryptionUtils encryptionUtils = new EncryptionUtils();
-                String decryptedMessage
-                        = encryptionUtils.decryptMessage(chatMessage.message, chatMessage.iv);
-                binding.textMessage.setText(decryptedMessage);
+//                String decryptedMessagesage
+//                        = encryptionUtilsls.decryptMessage(chatMessage.message, chatMessage.iv);
+//                binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {
                 throw new RuntimeException(e);

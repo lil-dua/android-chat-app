@@ -164,6 +164,7 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
                             user.email = queryDocumentSnapshot.getString(Constants.KEY_EMAIL);
                             user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
                             user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
+                            user.publicKey = queryDocumentSnapshot.getString(Constants.KEY_RECEIVER_PUBLIC_KEY);
                             user.id = queryDocumentSnapshot.getId();
                             users.add(user);
                         }
@@ -193,10 +194,12 @@ public class MainActivity extends BaseActivity implements ConversionListener, Us
                         chatMessage.conversionImage = documentChange.getDocument().getString(Constants.KEY_RECEIVER_IMAGE);
                         chatMessage.conversionName = documentChange.getDocument().getString(Constants.KEY_RECEIVER_NAME);
                         chatMessage.conversionId = documentChange.getDocument().getString(Constants.KEY_RECEIVED_ID);
+                        chatMessage.receiverPublicKey = documentChange.getDocument().getString(Constants.KEY_RECEIVER_PUBLIC_KEY);
                     }else {
                         chatMessage.conversionImage = documentChange.getDocument().getString(Constants.KEY_SENDER_IMAGE);
                         chatMessage.conversionName = documentChange.getDocument().getString(Constants.KEY_SENDER_NAME);
                         chatMessage.conversionId = documentChange.getDocument().getString(Constants.KEY_SENDER_ID);
+                        chatMessage.senderPublicKey = documentChange.getDocument().getString(Constants.KEY_SENDER_PUBLIC_KEY);
                     }
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_LAST_MESSAGE);
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);

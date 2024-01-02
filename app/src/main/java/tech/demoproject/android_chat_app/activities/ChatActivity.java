@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -75,21 +76,28 @@ public class ChatActivity extends BaseActivity {
                 preferenceManager.getString(Constants.KEY_USER_ID)
         );
         binding.chatRecycleView.setAdapter(chatAdapter);
-        database = FirebaseFirestore.getInstance()
-;    }
+        database = FirebaseFirestore.getInstance();
+        Log.i("ChatActivity", "init receiver public key: "+receiverUser.publicKey);
+    }
 
     // send message
     private void sendMessage(){
         try {
             EncryptionUtils encryptionUtils = new EncryptionUtils();
-            String cipherText = encryptionUtils.encryptMessage(binding.inputMessage.getText().toString());
+            byte[] receiverPublicKey = receiverUser.publicKey.toString().getBytes();
+            byte[] encryptedBytes = encryptionUtils.encryptMessage(
+                    binding.inputMessage.getText().toString(),
+                    receiverPublicKey);
+
+            String cipherText = Base64.encodeToString(encryptedBytes, Base64.DEFAULT);
+
 
             HashMap<String, Object> message = new HashMap<>();
             message.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
             message.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
             message.put(Constants.KEY_MESSAGE,cipherText);
             message.put(Constants.KEY_TIMESTAMP,new Date());
-            message.put(Constants.KEY_IV,encryptionUtils.ivStringKey);
+//            message.put(Constants.KEY_IV,encryptionUtils.ivStringKey);
             database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
             if(conversionId != null){
                 updateConversion(binding.inputMessage.getText().toString());
@@ -98,9 +106,12 @@ public class ChatActivity extends BaseActivity {
                 conversion.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
                 conversion.put(Constants.KEY_SENDER_NAME,preferenceManager.getString(Constants.KEY_NAME));
                 conversion.put(Constants.KEY_SENDER_IMAGE,preferenceManager.getString(Constants.KEY_IMAGE));
+                conversion.put(Constants.KEY_SENDER_PUBLIC_KEY,preferenceManager.getString(Constants.KEY_USER_PRIVATE_KEY));
                 conversion.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
                 conversion.put(Constants.KEY_RECEIVER_NAME,receiverUser.name);
                 conversion.put(Constants.KEY_RECEIVER_IMAGE,receiverUser.image);
+                conversion.put(Constants.KEY_RECEIVER_PUBLIC_KEY,receiverUser.publicKey);
+                Log.i("ChatActivity", "sendMessage: " + receiverUser.publicKey);
                 conversion.put(Constants.KEY_LAST_MESSAGE,binding.inputMessage.getText().toString());
                 conversion.put(Constants.KEY_TIMESTAMP,new Date());
                 addConversion(conversion);
@@ -267,6 +278,7 @@ public class ChatActivity extends BaseActivity {
 
     private void loadReceiverDetails(){
         receiverUser = (User) getIntent().getSerializableExtra(Constants.KEY_USER);
+        Log.i("ChatActivity", "loadReceiverDetails: "+receiverUser.publicKey);
         binding.textName.setText(receiverUser.name);
         binding.receiverImage.setImageBitmap(getBitmapFromEncodedString(receiverUser.image));
     }

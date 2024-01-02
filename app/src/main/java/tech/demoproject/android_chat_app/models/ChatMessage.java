@@ -9,4 +9,5 @@ public class ChatMessage {
     public String senderId, receiverId, message, dateTime,iv;
     public Date dateObject;
     public String conversionId, conversionName, conversionImage;
+    public String senderPublicKey, receiverPublicKey;
 }
