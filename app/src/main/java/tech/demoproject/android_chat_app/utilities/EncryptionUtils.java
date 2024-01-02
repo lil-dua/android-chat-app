@@ -1,72 +1,50 @@
 package tech.demoproject.android_chat_app.utilities;
 
-import android.util.Base64;
-
-import java.nio.charset.StandardCharsets;
-import java.security.spec.KeySpec;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 
 import javax.crypto.Cipher;
-import javax.crypto.KeyGenerator;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
 
 /***
  * Created by HoangRyan aka LilDua on 12/30/2023.
  */
 public class EncryptionUtils {
-    public String ivStringKey = "";
-    public String encryptMessage(String message) throws Exception {
-        // Generate AES key and initialization vector
-        KeyGenerator keygen = KeyGenerator.getInstance("AES");
-        keygen.init(256);
-
-        SecretKey key = keygen.generateKey();
-        Cipher cipherIV = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-        cipherIV.init(Cipher.ENCRYPT_MODE, key);
-
-        byte[] iv = cipherIV.getIV();
-        String ivString = Base64.encodeToString(iv, Base64.URL_SAFE);
-        ivStringKey = ivString;
-        // Perform encryption
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(Base64.decode(ivString, Base64.URL_SAFE));
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        KeySpec spec = new PBEKeySpec(
-                Constants.SECRET_KEY.toCharArray(),
-                Base64.decode(Constants.SALT, Base64.URL_SAFE),
-                10000,
-                256
-        );
-
-        SecretKey tmp = factory.generateSecret(spec);
-        SecretKeySpec secretKeyEncrypt = new SecretKeySpec(tmp.getEncoded(), "AES");
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKeyEncrypt, ivParameterSpec);
-
-        byte[] encryptedBytes = cipher.doFinal(message.getBytes(StandardCharsets.UTF_8));
-        return Base64.encodeToString(encryptedBytes, Base64.URL_SAFE);
+    private KeyPair generateKeyPair() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048);
+        return keyPairGenerator.generateKeyPair();
     }
 
-    public String decryptMessage(String message, String iv) throws Exception {
-        IvParameterSpec ivParameterSpecDecrypt = new IvParameterSpec(Base64.decode(iv, Base64.URL_SAFE));
-        SecretKeyFactory factoryDecrypt = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        PBEKeySpec specDecrypt = new PBEKeySpec(
-                Constants.SECRET_KEY.toCharArray(),
-                Base64.decode(Constants.SALT, Base64.URL_SAFE),
-                10000,
-                256
-        );
+    private byte[] encryptMessage(String message, byte[] recipientPublicKey) throws Exception {
+        PublicKey publicKey = keyBytesToPublicKey(recipientPublicKey);
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        return cipher.doFinal(message.getBytes());
+    }
 
-        SecretKey tmpDecrypt = factoryDecrypt.generateSecret(specDecrypt);
-        SecretKeySpec secretKeyDecrypt = new SecretKeySpec(tmpDecrypt.getEncoded(), "AES");
-        Cipher cipherDecrypt = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-        cipherDecrypt.init(Cipher.DECRYPT_MODE, secretKeyDecrypt, ivParameterSpecDecrypt);
+    private String decryptMessage(byte[] encryptedMessage, byte[] privateKey) throws Exception {
+        PrivateKey privateKeyObj = keyBytesToPrivateKey(privateKey);
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        cipher.init(Cipher.DECRYPT_MODE, privateKeyObj);
+        byte[] decryptedBytes = cipher.doFinal(encryptedMessage);
+        return new String(decryptedBytes);
+    }
 
-        byte[] decryptedBytes = cipherDecrypt.doFinal(Base64.decode(message, Base64.URL_SAFE));
-        String decryptedMessage = new String(decryptedBytes, StandardCharsets.UTF_8);
+    private PublicKey keyBytesToPublicKey(byte[] encodedKey) throws Exception {
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encodedKey);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePublic(keySpec);
+    }
 
-        return decryptedMessage;
+    private PrivateKey keyBytesToPrivateKey(byte[] encodedKey) throws Exception {
+        PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(encodedKey);
+        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+        return keyFactory.generatePrivate(keySpec);
     }
 }
