@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Collections;
 import java.util.List;
 
 import tech.demoproject.android_chat_app.databinding.ItemContainerReceivedMessageBinding;
@@ -21,23 +22,26 @@ import tech.demoproject.android_chat_app.utilities.EncryptionUtils;
 public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private final List<ChatMessage> chatMessages;
+    private List<ChatMessage> senderChatMessages = Collections.emptyList();
     private Bitmap receiverProfileImage;
     private final String senderId;
-    private static byte[] senderPublicKey;
+    private static byte[] senderPrivateKey;
+    private static byte[] receiverPrivateKey;
 
-    public static final int VIEW_TYPE_SENT = 1;
-    public static final int VIEW_TYPE_RECEIVED = 2;
+    public static final int VIEW_TYPE_SENT = 0;
+    public static final int VIEW_TYPE_RECEIVED = 1;
 
     public void setReceiverProfileImage(Bitmap bitmap){
         receiverProfileImage = bitmap;
     }
 
     public ChatAdapter(List<ChatMessage> chatMessages, Bitmap receiverProfileImage, String senderId,
-                       byte[] senderPublicKey) {
+                       byte[] senderPrivateKey, byte[] receiverPrivateKey) {
         this.chatMessages = chatMessages;
         this.receiverProfileImage = receiverProfileImage;
         this.senderId = senderId;
-        ChatAdapter.senderPublicKey = senderPublicKey;
+        ChatAdapter.senderPrivateKey = senderPrivateKey;
+        ChatAdapter.receiverPrivateKey = receiverPrivateKey;
     }
 
     @NonNull
@@ -87,6 +91,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         }
     }
 
+    public void setSenderChatMessages(List<ChatMessage> chatMessage) {
+        senderChatMessages = chatMessage;
+    }
+
     static class SentMessageViewHolder extends RecyclerView.ViewHolder {
 
         /* Because we have enable viewBinding for this project so here 'ItemContainerSentMessageBinding'
@@ -100,10 +108,10 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
         void setData(ChatMessage chatMessage){
             try {
-//                EncryptionUtils encryptionUtils = new EncryptionUtils();
-//                byte[] receivedMessage = Base64.decode(chatMessage.message, Base64.URL_SAFE);
-//                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,senderPublicKey);
-//                binding.textMessage.setText(decryptedMessage);
+                EncryptionUtils encryptionUtils = new EncryptionUtils();
+                byte[] receivedMessage = Base64.decode(chatMessage.message, Base64.URL_SAFE);
+                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,receiverPrivateKey);
+                binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -127,7 +135,7 @@ public class ChatAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             try {
                 EncryptionUtils encryptionUtils = new EncryptionUtils();
                 byte[] receivedMessage = Base64.decode(chatMessage.message, Base64.URL_SAFE);
-                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,senderPublicKey);
+                String decryptedMessage = encryptionUtils.decryptMessage(receivedMessage,senderPrivateKey);
                 binding.textMessage.setText(decryptedMessage);
                 binding.textDateTime.setText(chatMessage.dateTime);
             } catch (Exception e) {

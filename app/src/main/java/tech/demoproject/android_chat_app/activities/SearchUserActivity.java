@@ -85,6 +85,7 @@ public class SearchUserActivity extends AppCompatActivity implements UserListene
                             user.image = queryDocumentSnapshot.getString(Constants.KEY_IMAGE);
                             user.token = queryDocumentSnapshot.getString(Constants.KEY_FCM_TOKEN);
                             user.publicKey = queryDocumentSnapshot.getString(Constants.KEY_USER_PUBLIC_KEY);
+                            user.privateKey = queryDocumentSnapshot.getString(Constants.KEY_USER_PRIVATE_KEY);
                             user.id = queryDocumentSnapshot.getId();
                             users.add(user);
                         }

@@ -24,7 +24,6 @@ public class Constants {
     public static final String KEY_RECEIVED_ID = "receiverId";
     public static final String KEY_MESSAGE = "message";
     public static final String KEY_TIMESTAMP = "timestamp";
-    public static final String KEY_IV = "iv";
     // recent conversations
     public static final String KEY_COLLECTION_CONVERSATIONS = "test_conversations";
     public static final String KEY_SENDER_NAME = "senderName";

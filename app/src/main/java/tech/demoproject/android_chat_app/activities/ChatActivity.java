@@ -5,11 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -49,6 +49,7 @@ public class ChatActivity extends BaseActivity {
     private ActivityChatBinding binding;
     private User receiverUser;
     private List<ChatMessage> chatMessages;
+    private List<ChatMessage> senderChatMessages;
     private ChatAdapter chatAdapter;
     private PreferenceManager preferenceManager;
     private FirebaseFirestore database;
@@ -69,20 +70,26 @@ public class ChatActivity extends BaseActivity {
     private void init(){
         preferenceManager = new PreferenceManager(getApplicationContext());
         chatMessages = new ArrayList<>();
+        senderChatMessages = new ArrayList<>();
 
         byte[] userPrivateKey = Base64.decode(
                 preferenceManager.getString(Constants.KEY_USER_PRIVATE_KEY),
+                Base64.URL_SAFE);
+
+        byte[] receiverPrivateKey = Base64.decode(
+                receiverUser.privateKey,
                 Base64.URL_SAFE);
 
         chatAdapter = new ChatAdapter(
                 chatMessages,
                 getBitmapFromEncodedString(receiverUser.image),
                 preferenceManager.getString(Constants.KEY_USER_ID),
-                userPrivateKey
+                userPrivateKey,
+                receiverPrivateKey
+
         );
         binding.chatRecycleView.setAdapter(chatAdapter);
         database = FirebaseFirestore.getInstance();
-        Log.i("ChatActivity", "init receiver public key: "+receiverUser.publicKey);
     }
 
     // send message
@@ -98,12 +105,14 @@ public class ChatActivity extends BaseActivity {
 
             String cipherText = Base64.encodeToString(encryptedBytes, Base64.URL_SAFE);
 
+            //add message to database
             HashMap<String, Object> message = new HashMap<>();
             message.put(Constants.KEY_SENDER_ID,preferenceManager.getString(Constants.KEY_USER_ID));
             message.put(Constants.KEY_RECEIVED_ID,receiverUser.id);
             message.put(Constants.KEY_MESSAGE,cipherText);
             message.put(Constants.KEY_TIMESTAMP,new Date());
             database.collection(Constants.KEY_COLLECTION_CHAT).add(message);
+
             if(conversionId != null){
                 updateConversion(binding.inputMessage.getText().toString());
             }else {
@@ -142,7 +151,6 @@ public class ChatActivity extends BaseActivity {
                 }
             }
             binding.inputMessage.setText(null);
-
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -250,7 +258,6 @@ public class ChatActivity extends BaseActivity {
                     chatMessage.message = documentChange.getDocument().getString(Constants.KEY_MESSAGE);
                     chatMessage.dateTime = getReadableDateTime(documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP));
                     chatMessage.dateObject = documentChange.getDocument().getDate(Constants.KEY_TIMESTAMP);
-                    chatMessage.iv = documentChange.getDocument().getString(Constants.KEY_IV);
                     chatMessages.add(chatMessage);
                 }
 
